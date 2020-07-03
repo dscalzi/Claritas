@@ -1,0 +1,77 @@
+plugins {
+    id 'groovy'
+    id 'java'
+    id 'application'
+    id 'net.minecrell.licenser' version '0.4.1'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+group 'com.dscalzi'
+version '1.0.0'
+
+description = 'Utility library to extract metadata through bytecode analysis.'
+mainClassName = 'com.dscalzi.claritas.Main'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation "org.codehaus.groovy:groovy:${groovyVersion}"
+
+    implementation "org.ow2.asm:asm:${asmVersion}"
+    implementation "org.ow2.asm:asm-commons:${asmVersion}"
+
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "ch.qos.logback:logback-classic:${logbackVersion}"
+
+    implementation "net.sf.jopt-simple:jopt-simple:${joptsimpleVersion}"
+    implementation "com.google.code.gson:gson:${gsonVersion}"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+}
+
+processResources {
+    from 'LICENSE.txt'
+}
+
+license {
+    sourceSets = [project.sourceSets.main, project.sourceSets.test]
+    header = rootProject.file('HEADER.txt')
+    ext {
+        name = 'Daniel D. Scalzi'
+        year = '2020'
+        url = 'https://github.com/dscalzi/Claritas'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Version': getArchiveVersion(), 'Specification-Version': getArchiveVersion()
+    }
+}
+
+shadowJar {
+    archiveClassifier.set('dist')
+}
+assemble.dependsOn('shadowJar')
+
+sourceSets {
+    main {
+        java {
+            srcDirs = [] // don't compile Java code twice
+        }
+        groovy {
+            srcDirs = [ 'src/main/groovy', 'src/main/java' ]
+        }
+    }
+}
