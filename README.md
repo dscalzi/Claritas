@@ -39,6 +39,8 @@ The analysis results will be printed to stdout in json format, prefixed with `re
 }
 ```
 
+Only id and group can be resolved on 1.13+.
+
 #### Supported Libraries
 
 * FORGE

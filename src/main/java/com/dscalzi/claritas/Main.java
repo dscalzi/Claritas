@@ -64,7 +64,7 @@ public class Main {
 
         log.debug("TYPE       = {}", type.name());
         log.debug("MC VERSION = {}", mcVersion);
-        log.debug("JAR PATHS  = {}", (Object[]) absoluteJarPaths);
+        log.debug("JAR PATHS  = {}", (Object) absoluteJarPaths);
 
 
         Map<String, ModuleMetadata> results = new LinkedHashMap<>();
