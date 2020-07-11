@@ -22,37 +22,36 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.library.forge;
+package com.dscalzi.claritas.resolver.library.forge;
 
-import com.dscalzi.claritas.asm.dto.AnnotationData;
 import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
-import com.dscalzi.claritas.library.AnnotationMetadataResolver;
+import com.dscalzi.claritas.resolver.AnnotationMetadataResolver;
 import com.dscalzi.claritas.util.DataUtil;
 
-import java.util.LinkedList;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
-public class ForgeMetadataResolver_1_7 extends AnnotationMetadataResolver {
+public class ForgeMetadataResolver_1_13 extends AnnotationMetadataResolver {
 
-    private static final String A_K_MODID   = "modid";
-    private static final String A_K_VERSION = "version";
-    private static final String A_K_NAME    = "name";
+    private static final String A_K_MODID = "value";
 
-    public ForgeMetadataResolver_1_7(String annotationClass) {
-        super(annotationClass);
+    public ForgeMetadataResolver_1_13(String targetAnnotation) {
+        super(targetAnnotation);
     }
 
-    public ModuleMetadata resolve(LinkedList<AnnotationData> annotations) {
-        return annotations.stream()
-                .filter(a -> a.getClassName().equals(this.annotationClass))
+    @Override
+    public ModuleMetadata resolveMetadata(InputStream classStream) throws IOException {
+        return getAnnotations(classStream).stream()
+                .filter(a -> a.getClassName().equals(this.targetAnnotation))
                 .findFirst()
                 .map(a -> {
                     ModuleMetadata md = new ModuleMetadata();
                     md.setGroup(DataUtil.getPackage(a.getAnnotatedClassName()));
                     for(Map.Entry<String, Object> entry : a.getAnnotationData().entrySet()) {
-                        if(entry.getKey().equals(A_K_MODID)) md.setId((String)entry.getValue());
-                        else if(entry.getKey().equals(A_K_VERSION)) md.setVersion((String)entry.getValue());
-                        else if(entry.getKey().equals(A_K_NAME)) md.setName((String)entry.getValue());
+                        if(entry.getKey().equals(A_K_MODID)) {
+                            md.setId((String)entry.getValue());
+                        }
                     }
                     return md;
                 })

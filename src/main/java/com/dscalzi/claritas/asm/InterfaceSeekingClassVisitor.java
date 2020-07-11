@@ -24,40 +24,28 @@
 
 package com.dscalzi.claritas.asm;
 
-import com.dscalzi.claritas.asm.dto.AnnotationData;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.Opcodes;
+import com.dscalzi.claritas.util.Tuple;
 import org.objectweb.asm.Type;
 
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class LibraryClassVisitor extends ClassVisitor {
+public class InterfaceSeekingClassVisitor extends BaseClassVisitor {
 
-    private Type classType;
-    private final LinkedList<AnnotationData> annotations = new LinkedList<>();
-
-    public LibraryClassVisitor() {
-        super(Opcodes.ASM8);
-    }
+    private final LinkedList<Type> interfaceTypes = new LinkedList<>();
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        this.classType = Type.getObjectType(name);
+        super.visit(version, access, name, signature, superName, interfaces);
+        if(interfaces != null) {
+            Arrays.stream(interfaces).map(Type::getObjectType).forEach(interfaceTypes::add);
+        }
     }
 
-    @Override
-    public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-        Type t = Type.getType(descriptor);
-
-        AnnotationData ann = new AnnotationData(t.getClassName(), this.classType.getClassName());
-        annotations.addFirst(ann);
-
-        return new LibraryAnnotationVisitor(annotations, ann);
-    }
-
-    public LinkedList<AnnotationData> getAnnotations() {
-        return this.annotations;
+    public Tuple<String, List<String>> getInterfaces() {
+        return new Tuple<>(getClassName(), interfaceTypes.stream().map(Type::getClassName).collect(Collectors.toList()));
     }
 
 }

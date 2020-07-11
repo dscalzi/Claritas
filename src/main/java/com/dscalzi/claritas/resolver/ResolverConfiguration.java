@@ -22,24 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.library;
+package com.dscalzi.claritas.resolver;
 
-import com.dscalzi.claritas.exception.UnknownLibraryException;
-import com.dscalzi.claritas.library.forge.ForgeConfiguration;
+public abstract class ResolverConfiguration {
 
-public final class ResolverRegistry {
+    protected String mcVersion;
 
-    protected static LibraryConfiguration getLibraryConfiguration(LibraryType type) {
-        switch(type) {
-            case FORGE: return new ForgeConfiguration();
-            default: throw new UnknownLibraryException(type.name());
-        }
+    public ResolverConfiguration withMinecraftVersion(String mcVersion) {
+        this.mcVersion = mcVersion;
+        return this;
     }
 
-    public static AnnotationMetadataResolver getMetadataResolver(LibraryType type, String libraryVersion) {
-        return getLibraryConfiguration(type)
-                .withMinecraftVersion(libraryVersion)
-                .getResolver();
-    }
+    public abstract MetadataResolver getResolver();
 
 }

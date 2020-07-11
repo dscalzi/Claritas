@@ -22,28 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.library.forge;
+package com.dscalzi.claritas.resolver.library;
 
-import com.dscalzi.claritas.library.AnnotationMetadataResolver;
-import com.dscalzi.claritas.library.LibraryConfiguration;
-import com.dscalzi.claritas.util.MCVersionUtil;
+public enum LibraryType {
 
-public class ForgeConfiguration extends LibraryConfiguration {
-
-    public static final String A_1_7 = "cpw.mods.fml.common";
-    public static final String A_1_8_to_Plus = "net.minecraftforge.fml.common.Mod";
-
-    @Override
-    public AnnotationMetadataResolver getResolver() {
-        if(MCVersionUtil.gte(this.mcVersion, "1.13")) {
-            return new ForgeMetadataResolver_1_13(A_1_8_to_Plus);
-        } else if(MCVersionUtil.gte(this.mcVersion, "1.8")) {
-            return new ForgeMetadataResolver_1_7(A_1_8_to_Plus);
-        } else if(MCVersionUtil.gte(this.mcVersion, "1.7")) {
-            return new ForgeMetadataResolver_1_7(A_1_7);
-        } else {
-            throw new UnsupportedOperationException("Unsupported version: " + this.mcVersion);
-        }
-    }
+    FORGE,
+    LITELOADER
 
 }

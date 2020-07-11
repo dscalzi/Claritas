@@ -22,39 +22,23 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.library.forge;
+package com.dscalzi.claritas.asm.annotation;
 
 import com.dscalzi.claritas.asm.dto.AnnotationData;
-import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
-import com.dscalzi.claritas.library.AnnotationMetadataResolver;
-import com.dscalzi.claritas.util.DataUtil;
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Opcodes;
 
-import java.util.LinkedList;
-import java.util.Map;
+public class AccumulatingAnnotationVisitor extends AnnotationVisitor {
 
-public class ForgeMetadataResolver_1_13 extends AnnotationMetadataResolver {
+    private final AnnotationData annotation;
 
-    private static final String A_K_MODID = "value";
-
-    public ForgeMetadataResolver_1_13(String annotationClass) {
-        super(annotationClass);
+    public AccumulatingAnnotationVisitor(AnnotationData annotation) {
+        super(Opcodes.ASM8);
+        this.annotation = annotation;
     }
 
-    public ModuleMetadata resolve(LinkedList<AnnotationData> annotations) {
-        return annotations.stream()
-                .filter(a -> a.getClassName().equals(this.annotationClass))
-                .findFirst()
-                .map(a -> {
-                    ModuleMetadata md = new ModuleMetadata();
-                    md.setGroup(DataUtil.getPackage(a.getAnnotatedClassName()));
-                    for(Map.Entry<String, Object> entry : a.getAnnotationData().entrySet()) {
-                        if(entry.getKey().equals(A_K_MODID)) {
-                            md.setId((String)entry.getValue());
-                        }
-                    }
-                    return md;
-                })
-                .orElse(null);
+    @Override
+    public void visit(String name, Object value) {
+        annotation.getAnnotationData().put(name, value);
     }
-
 }

@@ -22,44 +22,33 @@
  * THE SOFTWARE.
  */
 
-import com.dscalzi.claritas.discovery.LibraryAnalyzer;
+package com.dscalzi.claritas.resolver.library.liteloader;
+
 import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
-import com.dscalzi.claritas.resolver.library.LibraryType;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.dscalzi.claritas.resolver.InterfaceMetadataResolver;
+import com.dscalzi.claritas.util.DataUtil;
+import com.dscalzi.claritas.util.Tuple;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.regex.Pattern;
 
-public class AsmTests {
+public class LiteloaderMetadataResolver extends InterfaceMetadataResolver {
 
-    private static final Logger log = LoggerFactory.getLogger(AsmTests.class);
+    private static final Pattern MATCHING_INTERFACE = Pattern.compile("^com\\.mumfrey\\.liteloader\\.[^.]+$");
 
-    @Test
-    public void generalTest() throws IOException {
+    @Override
+    public ModuleMetadata resolveMetadata(InputStream classStream) throws IOException {
 
+        Tuple<String, List<String>> interfaces = getInterfaces(classStream);
+        if(interfaces.getValue().stream().anyMatch(i -> MATCHING_INTERFACE.matcher(i).matches())) {
+            ModuleMetadata moduleMetadata = new ModuleMetadata();
+            moduleMetadata.setGroup(DataUtil.getPackage(interfaces.getKey()));
+            return moduleMetadata;
+        }
 
-        LibraryAnalyzer analyzer = new LibraryAnalyzer(
-                LibraryType.FORGE,
-                "1.12",
-                "D:\\TestRoot113\\servers\\Test-1.12.2\\forgemods\\DynamicSurroundings.jar");
-
-        ModuleMetadata md = analyzer.analyze();
-        System.out.println(md);
-
-//        ZipFile f = new ZipFile("D:\\TestRoot113\\servers\\Test-1.12.2\\forgemods\\DynamicSurroundings.jar");
-//
-//        try(InputStream target = f.getInputStream(f.getEntry("org/blockartistry/DynSurround/DSurround.class"))) {
-//
-//            ClassVisitor cv = new LibraryClassVisitor();
-//            ClassReader cr = new ClassReader(target);
-//            cr.accept(cv, 0);
-//
-//            //AnnotationVisitor av = cv.visitAnnotation("Mod", true);
-//
-//        }
-
-
+        return null;
     }
 
 }

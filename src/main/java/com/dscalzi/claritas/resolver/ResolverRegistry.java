@@ -22,44 +22,27 @@
  * THE SOFTWARE.
  */
 
-import com.dscalzi.claritas.discovery.LibraryAnalyzer;
-import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
+package com.dscalzi.claritas.resolver;
+
+import com.dscalzi.claritas.exception.UnknownLibraryException;
 import com.dscalzi.claritas.resolver.library.LibraryType;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.dscalzi.claritas.resolver.library.forge.ForgeConfiguration;
+import com.dscalzi.claritas.resolver.library.liteloader.LiteloaderConfiguration;
 
-import java.io.IOException;
+public final class ResolverRegistry {
 
-public class AsmTests {
+    protected static ResolverConfiguration getLibraryConfiguration(LibraryType type) {
+        switch(type) {
+            case FORGE: return new ForgeConfiguration();
+            case LITELOADER: return new LiteloaderConfiguration();
+            default: throw new UnknownLibraryException(type.name());
+        }
+    }
 
-    private static final Logger log = LoggerFactory.getLogger(AsmTests.class);
-
-    @Test
-    public void generalTest() throws IOException {
-
-
-        LibraryAnalyzer analyzer = new LibraryAnalyzer(
-                LibraryType.FORGE,
-                "1.12",
-                "D:\\TestRoot113\\servers\\Test-1.12.2\\forgemods\\DynamicSurroundings.jar");
-
-        ModuleMetadata md = analyzer.analyze();
-        System.out.println(md);
-
-//        ZipFile f = new ZipFile("D:\\TestRoot113\\servers\\Test-1.12.2\\forgemods\\DynamicSurroundings.jar");
-//
-//        try(InputStream target = f.getInputStream(f.getEntry("org/blockartistry/DynSurround/DSurround.class"))) {
-//
-//            ClassVisitor cv = new LibraryClassVisitor();
-//            ClassReader cr = new ClassReader(target);
-//            cr.accept(cv, 0);
-//
-//            //AnnotationVisitor av = cv.visitAnnotation("Mod", true);
-//
-//        }
-
-
+    public static MetadataResolver getMetadataResolver(LibraryType type, String libraryVersion) {
+        return getLibraryConfiguration(type)
+                .withMinecraftVersion(libraryVersion)
+                .getResolver();
     }
 
 }

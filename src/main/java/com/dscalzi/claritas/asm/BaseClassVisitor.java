@@ -22,44 +22,27 @@
  * THE SOFTWARE.
  */
 
-import com.dscalzi.claritas.discovery.LibraryAnalyzer;
-import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
-import com.dscalzi.claritas.resolver.library.LibraryType;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.dscalzi.claritas.asm;
 
-import java.io.IOException;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
-public class AsmTests {
+public class BaseClassVisitor extends ClassVisitor {
 
-    private static final Logger log = LoggerFactory.getLogger(AsmTests.class);
+    private Type classType;
 
-    @Test
-    public void generalTest() throws IOException {
+    public BaseClassVisitor() {
+        super(Opcodes.ASM8);
+    }
 
+    @Override
+    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+        this.classType = Type.getObjectType(name);
+    }
 
-        LibraryAnalyzer analyzer = new LibraryAnalyzer(
-                LibraryType.FORGE,
-                "1.12",
-                "D:\\TestRoot113\\servers\\Test-1.12.2\\forgemods\\DynamicSurroundings.jar");
-
-        ModuleMetadata md = analyzer.analyze();
-        System.out.println(md);
-
-//        ZipFile f = new ZipFile("D:\\TestRoot113\\servers\\Test-1.12.2\\forgemods\\DynamicSurroundings.jar");
-//
-//        try(InputStream target = f.getInputStream(f.getEntry("org/blockartistry/DynSurround/DSurround.class"))) {
-//
-//            ClassVisitor cv = new LibraryClassVisitor();
-//            ClassReader cr = new ClassReader(target);
-//            cr.accept(cv, 0);
-//
-//            //AnnotationVisitor av = cv.visitAnnotation("Mod", true);
-//
-//        }
-
-
+    public String getClassName() {
+        return classType.getClassName();
     }
 
 }

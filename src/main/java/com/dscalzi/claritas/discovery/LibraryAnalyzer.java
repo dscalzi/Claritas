@@ -24,20 +24,16 @@
 
 package com.dscalzi.claritas.discovery;
 
-import com.dscalzi.claritas.asm.LibraryClassVisitor;
-import com.dscalzi.claritas.asm.dto.AnnotationData;
 import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
-import com.dscalzi.claritas.library.AnnotationMetadataResolver;
-import com.dscalzi.claritas.library.LibraryType;
-import com.dscalzi.claritas.library.ResolverRegistry;
-import org.objectweb.asm.ClassReader;
+import com.dscalzi.claritas.resolver.MetadataResolver;
+import com.dscalzi.claritas.resolver.ResolverRegistry;
+import com.dscalzi.claritas.resolver.library.LibraryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -78,7 +74,7 @@ public class LibraryAnalyzer {
 
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(this.absoluteJarPath))) {
 
-            AnnotationMetadataResolver resolver = ResolverRegistry.getMetadataResolver(this.type, this.mcVersion);
+            MetadataResolver resolver = ResolverRegistry.getMetadataResolver(this.type, this.mcVersion);
 
             ZipEntry entry;
             while((entry = zis.getNextEntry()) != null) {
@@ -86,13 +82,7 @@ public class LibraryAnalyzer {
                 if(!entry.isDirectory() && isClassEntry(entry)) {
                     try(InputStream is = zipFile.getInputStream(entry)) {
 
-                        LibraryClassVisitor cv = new LibraryClassVisitor();
-                        ClassReader cr = new ClassReader(is);
-                        cr.accept(cv, 0);
-
-                        LinkedList<AnnotationData> annotations = cv.getAnnotations();
-                        ModuleMetadata md = resolver.resolve(annotations);
-
+                        ModuleMetadata md = resolver.resolveMetadata(is);
                         if(md != null) {
                             return md;
                         }

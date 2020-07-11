@@ -22,44 +22,24 @@
  * THE SOFTWARE.
  */
 
-import com.dscalzi.claritas.discovery.LibraryAnalyzer;
-import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
-import com.dscalzi.claritas.resolver.library.LibraryType;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.dscalzi.claritas.resolver;
+
+import com.dscalzi.claritas.asm.InterfaceSeekingClassVisitor;
+import com.dscalzi.claritas.util.Tuple;
+import org.objectweb.asm.ClassReader;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
-public class AsmTests {
+public abstract class InterfaceMetadataResolver extends MetadataResolver {
 
-    private static final Logger log = LoggerFactory.getLogger(AsmTests.class);
+    protected Tuple<String, List<String>> getInterfaces(InputStream classStream) throws IOException {
+        InterfaceSeekingClassVisitor cv = new InterfaceSeekingClassVisitor();
+        ClassReader cr = new ClassReader(classStream);
+        cr.accept(cv, 0);
 
-    @Test
-    public void generalTest() throws IOException {
-
-
-        LibraryAnalyzer analyzer = new LibraryAnalyzer(
-                LibraryType.FORGE,
-                "1.12",
-                "D:\\TestRoot113\\servers\\Test-1.12.2\\forgemods\\DynamicSurroundings.jar");
-
-        ModuleMetadata md = analyzer.analyze();
-        System.out.println(md);
-
-//        ZipFile f = new ZipFile("D:\\TestRoot113\\servers\\Test-1.12.2\\forgemods\\DynamicSurroundings.jar");
-//
-//        try(InputStream target = f.getInputStream(f.getEntry("org/blockartistry/DynSurround/DSurround.class"))) {
-//
-//            ClassVisitor cv = new LibraryClassVisitor();
-//            ClassReader cr = new ClassReader(target);
-//            cr.accept(cv, 0);
-//
-//            //AnnotationVisitor av = cv.visitAnnotation("Mod", true);
-//
-//        }
-
-
+        return cv.getInterfaces();
     }
 
 }

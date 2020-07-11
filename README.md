@@ -39,11 +39,12 @@ The analysis results will be printed to stdout in json format, prefixed with `re
 }
 ```
 
-Only id and group can be resolved on 1.13+.
+Only id and group can be resolved on 1.13+. Only group can be resolved for litemods.
 
 #### Supported Libraries
 
 * FORGE
+* LITELOADER
 
 Note: If bytecode analysis is possible, but not required, to resolve metadata for a particular library, support may not be added.
 

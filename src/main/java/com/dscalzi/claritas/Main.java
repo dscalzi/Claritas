@@ -27,7 +27,7 @@ package com.dscalzi.claritas;
 import com.dscalzi.claritas.discovery.LibraryAnalyzer;
 import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
 import com.dscalzi.claritas.exception.UnknownLibraryException;
-import com.dscalzi.claritas.library.LibraryType;
+import com.dscalzi.claritas.resolver.library.LibraryType;
 import com.google.gson.Gson;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;

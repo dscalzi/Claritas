@@ -22,10 +22,28 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.library;
+package com.dscalzi.claritas.resolver.library.forge;
 
-public enum LibraryType {
+import com.dscalzi.claritas.resolver.MetadataResolver;
+import com.dscalzi.claritas.resolver.ResolverConfiguration;
+import com.dscalzi.claritas.util.MCVersionUtil;
 
-    FORGE
+public class ForgeConfiguration extends ResolverConfiguration {
+
+    public static final String A_1_7 = "cpw.mods.fml.common";
+    public static final String A_1_8_to_Plus = "net.minecraftforge.fml.common.Mod";
+
+    @Override
+    public MetadataResolver getResolver() {
+        if(MCVersionUtil.gte(this.mcVersion, "1.13")) {
+            return new ForgeMetadataResolver_1_13(A_1_8_to_Plus);
+        } else if(MCVersionUtil.gte(this.mcVersion, "1.8")) {
+            return new ForgeMetadataResolver_1_7(A_1_8_to_Plus);
+        } else if(MCVersionUtil.gte(this.mcVersion, "1.7")) {
+            return new ForgeMetadataResolver_1_7(A_1_7);
+        } else {
+            throw new UnsupportedOperationException("Unsupported version: " + this.mcVersion);
+        }
+    }
 
 }

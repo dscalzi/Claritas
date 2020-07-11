@@ -22,25 +22,45 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.library;
+package com.dscalzi.claritas.util;
 
-import com.dscalzi.claritas.asm.dto.AnnotationData;
-import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
+import java.util.Objects;
 
-import java.util.LinkedList;
+public class Tuple<K, V> {
 
-public abstract class AnnotationMetadataResolver {
+    private final K key;
+    private final V value;
 
-    protected final String annotationClass;
-
-    public AnnotationMetadataResolver(String annotationClass) {
-        this.annotationClass = annotationClass;
+    public Tuple(K key, V value) {
+        this.key = key;
+        this.value = value;
     }
 
-    public String getAnnotationClass() {
-        return this.annotationClass;
+    public K getKey() {
+        return key;
     }
 
-    public abstract ModuleMetadata resolve(LinkedList<AnnotationData> annotations);
+    public V getValue() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tuple<?, ?> tuple = (Tuple<?, ?>) o;
+        return Objects.equals(key, tuple.key) &&
+                Objects.equals(value, tuple.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, value);
+    }
+
+    @Override
+    public String toString() {
+        return "{" + key + ": " + value + '}';
+    }
 
 }

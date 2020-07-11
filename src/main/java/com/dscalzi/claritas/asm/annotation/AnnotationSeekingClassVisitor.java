@@ -22,17 +22,31 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.library;
+package com.dscalzi.claritas.asm.annotation;
 
-public abstract class LibraryConfiguration {
+import com.dscalzi.claritas.asm.BaseClassVisitor;
+import com.dscalzi.claritas.asm.dto.AnnotationData;
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Type;
 
-    protected String mcVersion;
+import java.util.LinkedList;
 
-    public LibraryConfiguration withMinecraftVersion(String mcVersion) {
-        this.mcVersion = mcVersion;
-        return this;
+public class AnnotationSeekingClassVisitor extends BaseClassVisitor {
+
+    private final LinkedList<AnnotationData> annotations = new LinkedList<>();
+
+    @Override
+    public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
+        Type t = Type.getType(descriptor);
+
+        AnnotationData ann = new AnnotationData(t.getClassName(), this.getClassName());
+        annotations.addFirst(ann);
+
+        return new AccumulatingAnnotationVisitor(ann);
     }
 
-    public abstract AnnotationMetadataResolver getResolver();
+    public LinkedList<AnnotationData> getAnnotations() {
+        return this.annotations;
+    }
 
 }
