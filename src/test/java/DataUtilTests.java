@@ -48,6 +48,9 @@ public class DataUtilTests {
         dataMap.put(new String[]{"com.mod.util.common.AClass", "mod"}, "com.mod"); // Meh
         dataMap.put(new String[]{"com.someauthor.somemod.common.MainModClass", "somemod"}, "com.someauthor"); // Great
 
+        dataMap.put(new String[]{"com.dscalzi.skychanger.bukkit.internal.MainClass", "skychanger"}, "com.dscalzi");
+        dataMap.put(new String[]{"com.dscalzi.skychanger.forge.MainClass", "skychanger"}, "com.dscalzi");
+
         // No id
         dataMap.put(new String[]{"com.someauthor.somemod.common.MainModClass", null}, "com.someauthor.somemod"); // Great
         dataMap.put(new String[]{"com.mymod.MyClass", null}, "com.mymod"); // Meh

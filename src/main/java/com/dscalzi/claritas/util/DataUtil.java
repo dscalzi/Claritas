@@ -25,17 +25,31 @@
 package com.dscalzi.claritas.util;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class DataUtil {
 
     public static final List<String> BLACKLIST = Arrays.asList(
             "common",
-            "util"
+            "util",
+            "internal"
     );
+
+    public static final List<String> BLACKLIST_WHEN_NOT_ID = Arrays.asList(
+            "forge",
+            "bukkit",
+            "sponge"
+    );
+
+    public static List<String> buildBlacklist(@Nullable String id) {
+        List<String> ret = new ArrayList<>(BLACKLIST);
+        if(id == null) {
+            ret.addAll(BLACKLIST_WHEN_NOT_ID);
+        } else {
+            BLACKLIST_WHEN_NOT_ID.stream().filter(term -> !term.equals(id)).forEach(ret::add);
+        }
+        return ret;
+    }
 
     public static String getPackage(String name) {
         return name.substring(0, name.lastIndexOf('.')).toLowerCase();
@@ -44,11 +58,12 @@ public class DataUtil {
     public static String inferGroupFromPackage(String packageName, @Nullable String id) {
         // Linked list removeLast is O(1)
         LinkedList<String> packageBits = new LinkedList<>(Arrays.asList(packageName.split("\\.")));
+        List<String> CUSTOM_BLACKLIST = buildBlacklist(id);
 
         boolean isBadTerm = true;
         while(isBadTerm && !packageBits.isEmpty()) {
             String term = packageBits.getLast();
-            if(!Objects.equals(term, id) && !BLACKLIST.contains(term)) {
+            if(!Objects.equals(term, id) && !CUSTOM_BLACKLIST.contains(term)) {
                 isBadTerm = false;
             } else {
                 if(packageBits.size() == 1) {
