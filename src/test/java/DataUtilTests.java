@@ -67,4 +67,21 @@ public class DataUtilTests {
 
     }
 
+    @Test
+    public void testVersionClean() {
+
+        Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("@VERSION@", null);
+        dataMap.put("1.2.2", "1.2.2");
+        dataMap.put("${whyWouldIBeAVersionLOL}", null);
+
+        for(Map.Entry<String, String> entry : dataMap.entrySet()) {
+            Assertions.assertEquals(
+                    entry.getValue(),
+                    DataUtil.cleanVersion(entry.getKey())
+            );
+        }
+
+    }
+
 }

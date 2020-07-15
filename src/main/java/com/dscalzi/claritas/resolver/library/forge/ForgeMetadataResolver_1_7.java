@@ -55,7 +55,7 @@ public class ForgeMetadataResolver_1_7 extends AnnotationMetadataResolver {
                                 md.setId((String) entry.getValue());
                                 break;
                             case A_K_VERSION:
-                                md.setVersion((String) entry.getValue());
+                                md.setVersion(DataUtil.cleanVersion((String) entry.getValue()));
                                 break;
                             case A_K_NAME:
                                 md.setName((String) entry.getValue());

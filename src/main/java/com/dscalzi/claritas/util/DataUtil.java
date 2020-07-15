@@ -26,8 +26,11 @@ package com.dscalzi.claritas.util;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class DataUtil {
+
+    public static final Pattern ILLEGAL_VERSION_CHARS = Pattern.compile(".*[@$]+.*");
 
     public static final List<String> BLACKLIST = Arrays.asList(
             "common",
@@ -80,6 +83,16 @@ public class DataUtil {
         }
 
         return String.join(".", packageBits);
+    }
+
+    @Nullable
+    public static String cleanVersion(String version) {
+        if(version != null) {
+            if(!ILLEGAL_VERSION_CHARS.matcher(version).matches()) {
+                return version;
+            }
+        }
+        return null;
     }
 
 }
