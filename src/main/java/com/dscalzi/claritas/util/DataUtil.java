@@ -51,8 +51,11 @@ public class DataUtil {
             if(!Objects.equals(term, id) && !BLACKLIST.contains(term)) {
                 isBadTerm = false;
             } else {
-                // Don't remove the term if its the last one.
                 if(packageBits.size() == 1) {
+                    // Don't remove the term if its the last one.
+                    isBadTerm = false;
+                } else if(Objects.equals(term, id) && packageBits.size() == 2) {
+                    // ex. net.mymod, util.mymod
                     isBadTerm = false;
                 } else {
                     packageBits.removeLast();

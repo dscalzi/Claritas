@@ -40,18 +40,18 @@ public class DataUtilTests {
 
         Map<String[], String> dataMap = new HashMap<>();
         dataMap.put(new String[]{"com.someauthor.somemod.MainModClass", "somemod"}, "com.someauthor"); // Great
-        dataMap.put(new String[]{"author.mod.ThisClass", "mod"}, "author"); // Meh
+        dataMap.put(new String[]{"author.mod.ThisClass", "mod"}, "author.mod"); // Meh
         dataMap.put(new String[]{"mymodname.MainClass", "mymodname"}, "mymodname"); // Sad
         dataMap.put(new String[]{"com.author.mod.util.MainClass", "mod"}, "com.author"); // Acceptable
         dataMap.put(new String[]{"com.author.util.MainClass", "mod"}, "com.author"); // Meh
         dataMap.put(new String[]{"mod.util.MainClass", "mod"}, "mod"); // Sad
-        dataMap.put(new String[]{"com.mod.util.common.AClass", "mod"}, "com"); // Sad
+        dataMap.put(new String[]{"com.mod.util.common.AClass", "mod"}, "com.mod"); // Meh
         dataMap.put(new String[]{"com.someauthor.somemod.common.MainModClass", "somemod"}, "com.someauthor"); // Great
 
         // No id
         dataMap.put(new String[]{"com.someauthor.somemod.common.MainModClass", null}, "com.someauthor.somemod"); // Great
-        dataMap.put(new String[]{"com.mymod.MyClass", null}, "com.mymod"); // Sad
-        dataMap.put(new String[]{"com.author.TheClass", null}, "com.author"); // Acceptable
+        dataMap.put(new String[]{"com.mymod.MyClass", null}, "com.mymod"); // Meh
+        dataMap.put(new String[]{"com.author.TheClass", null}, "com.author"); // Great
         dataMap.put(new String[]{"mod.util.MainClass", null}, "mod"); // Sad
         dataMap.put(new String[]{"mymodname.MainClass", null}, "mymodname"); // Sad
 
