@@ -22,6 +22,7 @@ repositories {
 dependencies {
 
     implementation "org.codehaus.groovy:groovy:${groovyVersion}"
+    implementation "com.google.code.findbugs:jsr305:${jsr305Version}"
 
     implementation "org.ow2.asm:asm:${asmVersion}"
     implementation "org.ow2.asm:asm-commons:${asmVersion}"
@@ -62,6 +63,7 @@ jar {
 
 shadowJar {
     archiveClassifier.set('dist')
+    minimize()
 }
 assemble.dependsOn('shadowJar')
 

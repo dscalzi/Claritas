@@ -44,7 +44,7 @@ public class LiteloaderMetadataResolver extends InterfaceMetadataResolver {
         Tuple<String, List<String>> interfaces = getInterfaces(classStream);
         if(interfaces.getValue().stream().anyMatch(i -> MATCHING_INTERFACE.matcher(i).matches())) {
             ModuleMetadata moduleMetadata = new ModuleMetadata();
-            moduleMetadata.setGroup(DataUtil.getPackage(interfaces.getKey()));
+            moduleMetadata.setGroup(DataUtil.inferGroupFromPackage(DataUtil.getPackage(interfaces.getKey()), null));
             return moduleMetadata;
         }
 

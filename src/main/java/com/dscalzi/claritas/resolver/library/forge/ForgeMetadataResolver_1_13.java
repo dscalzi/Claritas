@@ -47,12 +47,12 @@ public class ForgeMetadataResolver_1_13 extends AnnotationMetadataResolver {
                 .findFirst()
                 .map(a -> {
                     ModuleMetadata md = new ModuleMetadata();
-                    md.setGroup(DataUtil.getPackage(a.getAnnotatedClassName()));
                     for(Map.Entry<String, Object> entry : a.getAnnotationData().entrySet()) {
                         if(entry.getKey().equals(A_K_MODID)) {
                             md.setId((String)entry.getValue());
                         }
                     }
+                    md.setGroup(DataUtil.inferGroupFromPackage(DataUtil.getPackage(a.getAnnotatedClassName()), md.getId()));
                     return md;
                 })
                 .orElse(null);

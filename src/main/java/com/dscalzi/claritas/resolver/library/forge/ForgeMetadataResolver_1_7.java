@@ -49,7 +49,6 @@ public class ForgeMetadataResolver_1_7 extends AnnotationMetadataResolver {
                 .findFirst()
                 .map(a -> {
                     ModuleMetadata md = new ModuleMetadata();
-                    md.setGroup(DataUtil.getPackage(a.getAnnotatedClassName()));
                     for(Map.Entry<String, Object> entry : a.getAnnotationData().entrySet()) {
                         switch (entry.getKey()) {
                             case A_K_MODID:
@@ -63,6 +62,7 @@ public class ForgeMetadataResolver_1_7 extends AnnotationMetadataResolver {
                                 break;
                         }
                     }
+                    md.setGroup(DataUtil.inferGroupFromPackage(DataUtil.getPackage(a.getAnnotatedClassName()), md.getId()));
                     return md;
                 })
                 .orElse(null);

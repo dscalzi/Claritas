@@ -24,10 +24,44 @@
 
 package com.dscalzi.claritas.util;
 
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+
 public class DataUtil {
+
+    public static final List<String> BLACKLIST = Arrays.asList(
+            "common",
+            "util"
+    );
 
     public static String getPackage(String name) {
         return name.substring(0, name.lastIndexOf('.')).toLowerCase();
+    }
+
+    public static String inferGroupFromPackage(String packageName, @Nullable String id) {
+        // Linked list removeLast is O(1)
+        LinkedList<String> packageBits = new LinkedList<>(Arrays.asList(packageName.split("\\.")));
+
+        boolean isBadTerm = true;
+        while(isBadTerm && !packageBits.isEmpty()) {
+            String term = packageBits.getLast();
+            if(!Objects.equals(term, id) && !BLACKLIST.contains(term)) {
+                isBadTerm = false;
+            } else {
+                // Don't remove the term if its the last one.
+                if(packageBits.size() == 1) {
+                    isBadTerm = false;
+                } else {
+                    packageBits.removeLast();
+                }
+
+            }
+        }
+
+        return String.join(".", packageBits);
     }
 
 }
