@@ -28,6 +28,7 @@ import com.dscalzi.claritas.discovery.LibraryAnalyzer;
 import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
 import com.dscalzi.claritas.exception.UnknownLibraryException;
 import com.dscalzi.claritas.resolver.library.LibraryType;
+import com.dscalzi.claritas.util.FileUtil;
 import com.google.gson.Gson;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -35,6 +36,8 @@ import joptsimple.OptionSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,6 +51,8 @@ public class Main {
         OptionSpec<String> absoluteJarPathsOpt = parser.accepts("absoluteJarPaths").withRequiredArg();
         OptionSpec<String> libraryTypeOpt = parser.accepts("libraryType").withRequiredArg();
         OptionSpec<String> mcVersionOpt = parser.accepts("mcVersion").withRequiredArg();
+        OptionSpec<String> outputFileOpt = parser.accepts("outputFile").withOptionalArg().defaultsTo("./output.json");
+        OptionSpec<Boolean> previewOutputOpt = parser.accepts("previewOutput").withOptionalArg().ofType(Boolean.class).defaultsTo(false);
 
         OptionSet options = parser.parse(args);
 
@@ -62,10 +67,17 @@ public class Main {
         final String mcVersion = options.valueOf(mcVersionOpt);
         final String[] absoluteJarPaths = options.valueOf(absoluteJarPathsOpt).split(",");
 
+        String outputFile = options.valueOf(outputFileOpt);
+        if(!outputFile.endsWith(".json")) {
+            outputFile += ".json";
+        }
+        final File realOutputFile = new File(outputFile);
+        FileUtil.ensureParentsExist(realOutputFile);
+
         log.debug("TYPE       = {}", type.name());
         log.debug("MC VERSION = {}", mcVersion);
         log.debug("JAR PATHS  = {}", (Object) absoluteJarPaths);
-
+        log.debug("OUTPUT     = {}", outputFile);
 
         Map<String, ModuleMetadata> results = new LinkedHashMap<>();
         for(String pth : absoluteJarPaths) {
@@ -74,7 +86,16 @@ public class Main {
             results.put(pth.replace("\\\\", "\\"), md);
         }
 
-        System.out.println("results::" + new Gson().toJson(results));
+        try(FileWriter writer = new FileWriter(realOutputFile)) {
+            new Gson().toJson(results, writer);
+            log.info("Result saved to {}", realOutputFile.toPath().toAbsolutePath().normalize().toString());
+            if(options.valueOf(previewOutputOpt)) {
+                System.out.println("results::" + new Gson().toJson(results));
+            }
+        } catch(Exception e) {
+            log.error("Failed to save output.", e);
+            System.exit(-1);
+        }
 
     }
 

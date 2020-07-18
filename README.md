@@ -18,10 +18,17 @@ Claritas requires three arguments.
 2. `--libraryType` The library that the specified jar files target.
 3. `--mcVersion` The minecraft version of the software. The patch version is not required.
 
+Optional arguments.
+
+1. `--outputFile` The path to store the JSON output. Can be relative to the cwd.
+    * Default: `./output.json`
+2. `--previewOutput` Will print a preview of the JSON output to stdout. This may contain incomplete data.
+    * Default: `false`
+
 **Example**
 `java -jar Claritas-1.0.0-dist.jar --absoluteJarPaths "C:/MyMod1.jar,C:/MyMod2.jar" --libraryType FORGE --mcVersion 1.12`
 
-The analysis results will be printed to stdout in json format, prefixed with `results::`. Sample result below.
+The analysis results will be stored in the file provided by `--outputFile` option. Sample result below.
 
 ```json
 {
