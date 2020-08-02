@@ -48,6 +48,26 @@ The analysis results will be stored in the file provided by `--outputFile` optio
 
 Only id and group can be resolved on 1.13+. Only group can be resolved for litemods.
 
+#### Using an argFile
+
+If your argument length exceed the command line limit, you can store them in an argFile and pass the path to that file as a VM option. Each option should be separated by a new line.
+
+`-Dclaritas.argFile="./argFile.txt"`
+
+File content (abbreviated)
+```text
+--libraryType
+FORGE
+--mcVersion
+1.12
+--outputFile
+./output.json
+--previewOutput
+true
+```
+
+Recall, VM options are passed before `-jar`. Ex. `java [VM options] -jar [jarfile] [Program Arguments]`
+
 #### Supported Libraries
 
 * FORGE

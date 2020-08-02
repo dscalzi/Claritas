@@ -35,4 +35,8 @@ public class FileUtil {
         }
     }
 
+    public static String getNormalizedAbsolute(File file) {
+        return file.toPath().toAbsolutePath().normalize().toString();
+    }
+
 }

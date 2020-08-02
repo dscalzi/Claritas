@@ -38,14 +38,20 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Main {
 
+    public static final String VM_OPTION_ARG_FILE = "claritas.argFile";
+
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
+
+        String[] workingArgs = resolveArgSource(args);
 
         OptionParser parser = new OptionParser();
         OptionSpec<String> absoluteJarPathsOpt = parser.accepts("absoluteJarPaths").withRequiredArg();
@@ -54,7 +60,7 @@ public class Main {
         OptionSpec<String> outputFileOpt = parser.accepts("outputFile").withOptionalArg().defaultsTo("./output.json");
         OptionSpec<Boolean> previewOutputOpt = parser.accepts("previewOutput").withOptionalArg().ofType(Boolean.class).defaultsTo(false);
 
-        OptionSet options = parser.parse(args);
+        OptionSet options = parser.parse(workingArgs);
 
         String libRaw = options.valueOf(libraryTypeOpt);
         final LibraryType type;
@@ -88,13 +94,39 @@ public class Main {
 
         try(FileWriter writer = new FileWriter(realOutputFile)) {
             new Gson().toJson(results, writer);
-            log.info("Result saved to {}", realOutputFile.toPath().toAbsolutePath().normalize().toString());
+            log.info("Result saved to {}", FileUtil.getNormalizedAbsolute(realOutputFile));
             if(options.valueOf(previewOutputOpt)) {
                 System.out.println("results::" + new Gson().toJson(results));
             }
         } catch(Exception e) {
             log.error("Failed to save output.", e);
             System.exit(-1);
+        }
+
+    }
+
+    protected static String[] resolveArgSource(String[] mainArgs) {
+
+        String argFilePath = System.getProperty(VM_OPTION_ARG_FILE);
+        if(argFilePath == null) {
+            return mainArgs;
+        }
+
+        final File argFile = new File(argFilePath);
+        if(!argFile.exists()) {
+            log.error("Resolved argFile: {}", FileUtil.getNormalizedAbsolute(argFile));
+            throw new IllegalArgumentException(String.format("ArgFile %s does not exist!", argFilePath));
+        }
+
+        try {
+            log.info("Pulling arguments from argFile at {}", FileUtil.getNormalizedAbsolute(argFile));
+            String argFileContent = new String(Files.readAllBytes(argFile.toPath()));
+            return argFileContent.split("\\r?\\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("IOException while processing argFile");
+            System.exit(-1);
+            return null;
         }
 
     }
