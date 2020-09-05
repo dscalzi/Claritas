@@ -22,22 +22,16 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.discovery.dto.forge
+package com.dscalzi.claritas.discovery.dto.internal
 
-import com.dscalzi.claritas.discovery.dto.ModuleMetadata
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
+// Non-standard
+class TweakMetaFile {
 
-@ToString
-@EqualsAndHashCode(callSuper = true)
-class ForgeMetadata_1_7 extends ModuleMetadata {
-
-    ForgeMetadata_1_7() { }
-
-    ForgeMetadata_1_7(ForgeModType_1_7 modType) {
-        this.modType = modType
-    }
-
-    ForgeModType_1_7 modType
+    String id
+    String name
+    String version
+    List<String> authors
+    String description
+    String url
 
 }

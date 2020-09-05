@@ -37,6 +37,12 @@ enum ForgeModType_1_7 {
      */
     CORE_MOD,
     /**
+     * Tweaker jar that does not do anything with forge.
+     * Forge still loads them for some reason. Has TweakClass
+     * manifest entry.
+     */
+    TWEAKER,
+    /**
      * All we know is this is a JAR file.
      */
     UNKNOWN

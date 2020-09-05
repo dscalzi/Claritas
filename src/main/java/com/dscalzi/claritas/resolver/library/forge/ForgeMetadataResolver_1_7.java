@@ -28,18 +28,26 @@ import com.dscalzi.claritas.asm.ClaritasClassVisitor;
 import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
 import com.dscalzi.claritas.discovery.dto.forge.ForgeMetadata_1_7;
 import com.dscalzi.claritas.discovery.dto.forge.ForgeModType_1_7;
+import com.dscalzi.claritas.discovery.dto.internal.TweakMetaFile;
 import com.dscalzi.claritas.resolver.MetadataResolver;
 import com.dscalzi.claritas.util.DataUtil;
 import com.dscalzi.claritas.util.Tuple;
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 public class ForgeMetadataResolver_1_7 extends MetadataResolver {
 
@@ -56,9 +64,13 @@ public class ForgeMetadataResolver_1_7 extends MetadataResolver {
     private final String coreModAnnotation;
     private final String dummyContainerClass;
 
+    // Core Mods
     private boolean isCoreMod;
-    private String coreModIdValue;
-    private String coreModGroup;
+    public final ForgeMetadata_1_7 coreModMetadata = new ForgeMetadata_1_7(ForgeModType_1_7.CORE_MOD);
+
+    // Tweakers
+    private boolean isTweaker;
+    private final ForgeMetadata_1_7 tweakMetadata = new ForgeMetadata_1_7(ForgeModType_1_7.TWEAKER);
 
     public ForgeMetadataResolver_1_7(String standardAnnotation, String coreModBase, String coreModAnnotation, String dummyContainerClass) {
         this.standardAnnotation = standardAnnotation;
@@ -75,6 +87,10 @@ public class ForgeMetadataResolver_1_7 extends MetadataResolver {
                 Manifest manifest = jar.getManifest();
                 if(manifest != null) {
                     this.isCoreMod = manifest.getMainAttributes().getValue("FMLCorePlugin") != null;
+                    this.isTweaker = manifest.getMainAttributes().getValue("TweakClass") != null;
+                    if(isTweaker) {
+                        fetchTweakerMeta(absoluteJarPath, manifest.getMainAttributes());
+                    }
                 }
             } catch(IOException e) {
                 logger.error("IO exception while pre-analyzing {}", absoluteJarPath);
@@ -82,6 +98,52 @@ public class ForgeMetadataResolver_1_7 extends MetadataResolver {
         } else {
             logger.warn("Resolve invoked on non-jar file {}", absoluteJarPath);
         }
+    }
+
+    private void fetchTweakerMeta(String absoluteJarPath, Attributes mainAttributes) {
+        // TweakMetaFile is not standard but some mods have it anyway.
+        // https://github.com/MinecraftForge/MinecraftForge/pull/2892
+
+        String manifestTweakClass = mainAttributes.getValue("TweakClass");
+        String manifestTweakName = DataUtil.getNonEmptyStringOrNull(mainAttributes.getValue("TweakName"));
+        String manifestTweakVersion = DataUtil.getNonEmptyStringOrNull(mainAttributes.getValue("TweakVersion"));
+        String manifestTweakMetaFile = DataUtil.getNonEmptyStringOrNull(mainAttributes.getValue("TweakMetaFile"));
+
+        String tweakMetaId = null;
+        String tweakMetaName = null;
+        String tweakMetaVersion = null;
+
+        if(manifestTweakMetaFile != null) {
+            try {
+                ZipFile zipFile = new ZipFile(absoluteJarPath);
+
+                try (ZipInputStream zis = new ZipInputStream(new FileInputStream(absoluteJarPath))) {
+                    ZipEntry entry;
+                    while((entry = zis.getNextEntry()) != null) {
+
+                        if(!entry.isDirectory() && entry.getName().endsWith(manifestTweakMetaFile)) {
+                            try(InputStream is = zipFile.getInputStream(entry)) {
+                                TweakMetaFile tweakMetaFile = (new Gson()).fromJson(new InputStreamReader(is), TweakMetaFile.class);
+                                tweakMetaId = DataUtil.getNonEmptyStringOrNull(tweakMetaFile.getId());
+                                tweakMetaName = DataUtil.getNonEmptyStringOrNull(tweakMetaFile.getName());
+                                tweakMetaVersion = DataUtil.getNonEmptyStringOrNull(tweakMetaFile.getVersion());
+                            }
+                        }
+                    }
+                } catch(IOException e) {
+                    logger.error("IOException while processing jar file {}.", absoluteJarPath, e);
+                }
+
+            } catch(IOException e) {
+                logger.error("IO exception while pulling tweak meta file {} from {}.", manifestTweakMetaFile, absoluteJarPath);
+            }
+        }
+
+        this.tweakMetadata.setId(tweakMetaId == null ? (tweakMetaName == null ? (manifestTweakName == null ? null : manifestTweakName.toLowerCase()) : tweakMetaName.toLowerCase()) : tweakMetaId);
+        this.tweakMetadata.setName(DataUtil.multiplex(tweakMetaName, manifestTweakName));
+        this.tweakMetadata.setVersion(DataUtil.multiplex(tweakMetaVersion, manifestTweakVersion));
+        this.tweakMetadata.setGroup(DataUtil.inferGroupFromPackage(DataUtil.getPackage(manifestTweakClass), this.tweakMetadata.getId()));
+
     }
 
     @Override
@@ -117,34 +179,34 @@ public class ForgeMetadataResolver_1_7 extends MetadataResolver {
         }
 
         if(isCoreMod) {
-            if(this.coreModIdValue == null) {
+            if(this.coreModMetadata.getId() == null) {
                 cv.getAnnotations().stream()
                         .filter(a -> a.getClassName().equals(this.coreModAnnotation))
                         .findFirst()
                         .ifPresent(a -> {
-                            this.coreModIdValue = DataUtil.getNonEmptyStringOrNull((String) a.getAnnotationData().get(A_COREMOD_K_VALUE));
-                            this.coreModGroup = DataUtil.inferGroupFromPackage(DataUtil.getPackage(a.getAnnotatedClassName()), coreModIdValue);
+                            this.coreModMetadata.setId(DataUtil.getNonEmptyStringOrNull((String) a.getAnnotationData().get(A_COREMOD_K_VALUE)));
+                            this.coreModMetadata.setGroup(DataUtil.inferGroupFromPackage(DataUtil.getPackage(a.getAnnotatedClassName()), this.coreModMetadata.getId()));
                         });
             }
-            if(this.coreModGroup == null) {
+            if(this.coreModMetadata.getGroup() == null) {
 
                 // Try by looking for annotation.
                 cv.getAnnotations().stream().filter(a -> a.getClassName().contains(this.coreModBase))
                         .findFirst()
-                        .ifPresent(a -> this.coreModGroup = DataUtil.inferGroupFromPackage(DataUtil.getPackage(a.getAnnotatedClassName()), coreModIdValue));
+                        .ifPresent(a -> this.coreModMetadata.setGroup(DataUtil.inferGroupFromPackage(DataUtil.getPackage(a.getAnnotatedClassName()), this.coreModMetadata.getId())));
 
                 // Try by looking for implements
-                if(this.coreModGroup == null) {
+                if(this.coreModMetadata.getGroup() == null) {
                     Tuple<String, List<String>> interfaces = cv.getInterfaces();
                     interfaces.getValue().stream().filter(i -> i.equals(this.coreModBase))
                             .findFirst()
-                            .ifPresent(i -> this.coreModGroup = DataUtil.inferGroupFromPackage(DataUtil.getPackage(interfaces.getKey()), coreModIdValue));
+                            .ifPresent(i -> this.coreModMetadata.setGroup(DataUtil.inferGroupFromPackage(DataUtil.getPackage(interfaces.getKey()), this.coreModMetadata.getId())));
                 }
 
                 // Try looking for extends
-                if(this.coreModGroup == null) {
+                if(this.coreModMetadata.getGroup() == null) {
                     if(cv.getSuperClassName().equals(this.dummyContainerClass)) {
-                        this.coreModGroup = DataUtil.inferGroupFromPackage(DataUtil.getPackage(cv.getClassName()), coreModIdValue);
+                        this.coreModMetadata.setGroup(DataUtil.inferGroupFromPackage(DataUtil.getPackage(cv.getClassName()), this.coreModMetadata.getId()));
                     }
                 }
             }
@@ -155,14 +217,12 @@ public class ForgeMetadataResolver_1_7 extends MetadataResolver {
 
     @Override
     public ModuleMetadata getIfNoneFound() {
-        ForgeMetadata_1_7 ifNull = new ForgeMetadata_1_7();
         if(isCoreMod) {
-            ifNull.setModType(ForgeModType_1_7.CORE_MOD);
-            ifNull.setId(this.coreModIdValue);
-            ifNull.setGroup(this.coreModGroup);
+            return this.coreModMetadata;
+        } else if(isTweaker) {
+            return this.tweakMetadata;
         } else {
-            ifNull.setModType(ForgeModType_1_7.UNKNOWN);
+            return new ForgeMetadata_1_7(ForgeModType_1_7.UNKNOWN);
         }
-        return ifNull;
     }
 }

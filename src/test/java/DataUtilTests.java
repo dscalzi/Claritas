@@ -51,6 +51,8 @@ public class DataUtilTests {
         dataMap.put(new String[]{"com.dscalzi.skychanger.bukkit.internal.MainClass", "skychanger"}, "com.dscalzi");
         dataMap.put(new String[]{"com.dscalzi.skychanger.forge.MainClass", "skychanger"}, "com.dscalzi");
 
+        dataMap.put(new String[]{"guichaguri.betterfps.tweaker.BetterFpsTweaker", "betterfps"}, "guichaguri.betterfps");
+
         // No id
         dataMap.put(new String[]{"com.someauthor.somemod.common.MainModClass", null}, "com.someauthor.somemod"); // Great
         dataMap.put(new String[]{"com.mymod.MyClass", null}, "com.mymod"); // Meh

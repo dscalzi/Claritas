@@ -35,7 +35,9 @@ public class DataUtil {
     public static final List<String> BLACKLIST = Arrays.asList(
             "common",
             "util",
-            "internal"
+            "internal",
+            "tweaker",
+            "tweak"
     );
 
     public static final List<String> BLACKLIST_WHEN_NOT_ID = Arrays.asList(
@@ -49,7 +51,7 @@ public class DataUtil {
         if(id == null) {
             ret.addAll(BLACKLIST_WHEN_NOT_ID);
         } else {
-            BLACKLIST_WHEN_NOT_ID.stream().filter(term -> !term.equals(id)).forEach(ret::add);
+            BLACKLIST_WHEN_NOT_ID.stream().filter(term -> !term.equalsIgnoreCase(id)).forEach(ret::add);
         }
         return ret;
     }
@@ -86,7 +88,7 @@ public class DataUtil {
     }
 
     @Nullable
-    public static String getNonEmptyStringOrNull(String str) {
+    public static String getNonEmptyStringOrNull(@Nullable String str) {
         if(str == null || str.trim().length() == 0) {
             return null;
         }
@@ -101,6 +103,11 @@ public class DataUtil {
             }
         }
         return null;
+    }
+
+    @Nullable
+    public static <T> T multiplex(@Nullable T a, @Nullable T b) {
+        return a != null ? a : b;
     }
 
 }

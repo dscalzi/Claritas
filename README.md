@@ -52,7 +52,7 @@ The analysis results will be stored in the file provided by `--outputFile` optio
 
 * `id` The mod id.
   * Present on ForgeMods (1.7-1.12) of type MOD.
-  * Possibly present on ForgeMods (1.7-1.12) of type CORE_MOD.
+  * Possibly present on ForgeMods (1.7-1.12) of type CORE_MOD and TWEAKER.
   * Always present on ForgeMods 1.13+.
   * Never present in all other circumstances.
 * `group` The mod group.
@@ -64,7 +64,7 @@ The analysis results will be stored in the file provided by `--outputFile` optio
 * `name` The mod name.
   * Possibly present on ForgeMods (1.7-1.12).
   * Never present in all other circumstances.
-* `modType` The mod type (MOD, CORE_MOD, or UNKNOWN).
+* `modType` The mod type (MOD, CORE_MOD, TWEAKER, or UNKNOWN).
   * Always present on ForgeMods (1.7-1.12).
   * Never present in all other circumstances.
 

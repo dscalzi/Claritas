@@ -94,7 +94,7 @@ public class LibraryAnalyzer {
 
             }
         } catch(IOException e) {
-            log.error("IOException while processing jar file.", e);
+            log.error("IOException while processing jar file {}.", absoluteJarPath, e);
             return null;
         }
 
