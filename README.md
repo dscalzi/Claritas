@@ -35,16 +35,38 @@ The analysis results will be stored in the file provided by `--outputFile` optio
   "C:/MyMod1.jar": {
     "id": "modid1",
     "group": "com.mod1",
-    "version": "3.4.2"
+    "version": "3.4.2",
+    "modType": "MOD"
   },
   "C:/MyMod2.jar": {
     "id": "modid2",
     "group": "org.mod2",
     "version": "1.0.0",
-    "name": "My Mod (note, name not always available)"
+    "name": "My Mod (note, name not always available)",
+    "modType": "MOD"
   }
 }
 ```
+
+#### Result Object
+
+* `id` The mod id.
+  * Present on ForgeMods (1.7-1.12) of type MOD.
+  * Possibly present on ForgeMods (1.7-1.12) of type CORE_MOD.
+  * Always present on ForgeMods 1.13+.
+  * Never present in all other circumstances.
+* `group` The mod group.
+  * Never present on ForgeMods (1.7-1.12) of type UNKNOWN.
+  * Present in all other circumstances.
+* `version` The mod version.
+  * Possibly present on ForgeMods (1.7-1.12).
+  * Never present in all other circumstances.
+* `name` The mod name.
+  * Possibly present on ForgeMods (1.7-1.12).
+  * Never present in all other circumstances.
+* `modType` The mod type (MOD, CORE_MOD, or UNKNOWN).
+  * Always present on ForgeMods (1.7-1.12).
+  * Never present in all other circumstances.
 
 Only id and group can be resolved on 1.13+. Only group can be resolved for litemods.
 

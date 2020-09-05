@@ -30,17 +30,29 @@ import com.dscalzi.claritas.util.MCVersionUtil;
 
 public class ForgeConfiguration extends ResolverConfiguration {
 
-    public static final String A_1_7 = "cpw.mods.fml.common";
-    public static final String A_1_8_to_Plus = "net.minecraftforge.fml.common.Mod";
+    public static final String A_STANDARD_1_7 = "cpw.mods.fml.common";
+    public static final String A_STANDARD_1_8_to_Plus = "net.minecraftforge.fml.common.Mod";
+    public static final String C_COREMOD_1_7 = "cpw.mods.fml.relauncher.IFMLLoadingPlugin";
+    public static final String C_COREMOD_1_8_to_1_12 = "net.minecraftforge.fml.relauncher.IFMLLoadingPlugin";
+    public static final String C_COREMOD_DC_1_7 = "cpw.mods.fml.common.DummyModContainer";
+    public static final String C_COREMOD_DC_1_8_to_1_12 = "net.minecraftforge.fml.common.DummyModContainer";
 
     @Override
     public MetadataResolver getResolver() {
         if(MCVersionUtil.gte(this.mcVersion, "1.13")) {
-            return new ForgeMetadataResolver_1_13(A_1_8_to_Plus);
+            return new ForgeMetadataResolver_1_13(A_STANDARD_1_8_to_Plus);
         } else if(MCVersionUtil.gte(this.mcVersion, "1.8")) {
-            return new ForgeMetadataResolver_1_7(A_1_8_to_Plus);
+            return new ForgeMetadataResolver_1_7(
+                    A_STANDARD_1_8_to_Plus,
+                    C_COREMOD_1_8_to_1_12,
+                    C_COREMOD_1_8_to_1_12 + "$Name",
+                    C_COREMOD_DC_1_8_to_1_12);
         } else if(MCVersionUtil.gte(this.mcVersion, "1.7")) {
-            return new ForgeMetadataResolver_1_7(A_1_7);
+            return new ForgeMetadataResolver_1_7(
+                    A_STANDARD_1_7,
+                    C_COREMOD_1_7,
+                    C_COREMOD_1_7 + "$Name",
+                    C_COREMOD_DC_1_7);
         } else {
             throw new UnsupportedOperationException("Unsupported version: " + this.mcVersion);
         }

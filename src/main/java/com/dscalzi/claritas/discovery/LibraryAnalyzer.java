@@ -72,9 +72,11 @@ public class LibraryAnalyzer {
             return null;
         }
 
+        MetadataResolver resolver = ResolverRegistry.getMetadataResolver(this.type, this.mcVersion);
+
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(this.absoluteJarPath))) {
 
-            MetadataResolver resolver = ResolverRegistry.getMetadataResolver(this.type, this.mcVersion);
+            resolver.preAnalyze(absoluteJarPath);
 
             ZipEntry entry;
             while((entry = zis.getNextEntry()) != null) {
@@ -96,8 +98,11 @@ public class LibraryAnalyzer {
             return null;
         }
 
-        log.error("Failed to resolve metadata for {}.", this.absoluteJarPath);
-        return null;
+        ModuleMetadata md = resolver.getIfNoneFound();
+        if(md == null) {
+            log.error("Failed to resolve metadata for {}.", this.absoluteJarPath);
+        }
+        return md;
     }
 
 

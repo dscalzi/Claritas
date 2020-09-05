@@ -22,34 +22,23 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.resolver;
+package com.dscalzi.claritas.discovery.dto.forge
 
-import com.dscalzi.claritas.asm.ClaritasClassVisitor;
-import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
-import groovyjarjarantlr4.v4.runtime.misc.Nullable;
-import org.objectweb.asm.ClassReader;
+enum ForgeModType_1_7 {
 
-import java.io.IOException;
-import java.io.InputStream;
-
-public abstract class MetadataResolver {
-
-    public void preAnalyze(String absoluteJarPath) {
-        // Do nothing by default.
-    }
-
-    @Nullable
-    public abstract ModuleMetadata resolveMetadata(InputStream classStream) throws IOException;
-
-    public ModuleMetadata getIfNoneFound() {
-        return null;
-    }
-
-    public ClaritasClassVisitor getClaritasClassVisitor(InputStream classStream) throws IOException {
-        ClaritasClassVisitor cv = new ClaritasClassVisitor();
-        ClassReader cr = new ClassReader(classStream);
-        cr.accept(cv, 0);
-        return cv;
-    }
+    /**
+     * Standard mod with an @Mod annotation.
+     */
+    MOD,
+    /**
+     * Mod without an @Mod annotation. Contains a class
+     * that extends DummyModContainer OR annotated with
+     * IFMLLoadingPlugin.Name OR implements IFMLLoadingPlugin.
+     */
+    CORE_MOD,
+    /**
+     * All we know is this is a JAR file.
+     */
+    UNKNOWN
 
 }

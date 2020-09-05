@@ -86,6 +86,14 @@ public class DataUtil {
     }
 
     @Nullable
+    public static String getNonEmptyStringOrNull(String str) {
+        if(str == null || str.trim().length() == 0) {
+            return null;
+        }
+        return str;
+    }
+
+    @Nullable
     public static String cleanVersion(String version) {
         if(version != null) {
             if(!ILLEGAL_VERSION_CHARS.matcher(version).matches()) {
