@@ -24,8 +24,9 @@
 
 package com.dscalzi.claritas.resolver.library.liteloader;
 
+import com.dscalzi.claritas.asm.ClaritasClassVisitor;
 import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
-import com.dscalzi.claritas.resolver.InterfaceMetadataResolver;
+import com.dscalzi.claritas.resolver.MetadataResolver;
 import com.dscalzi.claritas.util.DataUtil;
 import com.dscalzi.claritas.util.Tuple;
 
@@ -34,14 +35,15 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class LiteloaderMetadataResolver extends InterfaceMetadataResolver {
+public class LiteloaderMetadataResolver extends MetadataResolver {
 
     private static final Pattern MATCHING_INTERFACE = Pattern.compile("^com\\.mumfrey\\.liteloader\\.[^.]+$");
 
     @Override
     public ModuleMetadata resolveMetadata(InputStream classStream) throws IOException {
 
-        Tuple<String, List<String>> interfaces = getInterfaces(classStream);
+        ClaritasClassVisitor cv = this.getClaritasClassVisitor(classStream);
+        Tuple<String, List<String>> interfaces = cv.getInterfaces();
         if(interfaces.getValue().stream().anyMatch(i -> MATCHING_INTERFACE.matcher(i).matches())) {
             ModuleMetadata moduleMetadata = new ModuleMetadata();
             moduleMetadata.setGroup(DataUtil.inferGroupFromPackage(DataUtil.getPackage(interfaces.getKey()), null));

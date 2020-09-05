@@ -24,8 +24,10 @@
 
 package com.dscalzi.claritas.resolver;
 
+import com.dscalzi.claritas.asm.ClaritasClassVisitor;
 import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
 import groovyjarjarantlr4.v4.runtime.misc.Nullable;
+import org.objectweb.asm.ClassReader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,5 +36,12 @@ public abstract class MetadataResolver {
 
     @Nullable
     public abstract ModuleMetadata resolveMetadata(InputStream classStream) throws IOException;
+
+    public ClaritasClassVisitor getClaritasClassVisitor(InputStream classStream) throws IOException {
+        ClaritasClassVisitor cv = new ClaritasClassVisitor();
+        ClassReader cr = new ClassReader(classStream);
+        cr.accept(cv, 0);
+        return cv;
+    }
 
 }

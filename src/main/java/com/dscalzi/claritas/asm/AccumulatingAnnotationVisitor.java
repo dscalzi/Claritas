@@ -22,30 +22,23 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.resolver;
+package com.dscalzi.claritas.asm;
 
-import com.dscalzi.claritas.asm.annotation.AnnotationSeekingClassVisitor;
 import com.dscalzi.claritas.asm.dto.AnnotationData;
-import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Opcodes;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
+public class AccumulatingAnnotationVisitor extends AnnotationVisitor {
 
-public abstract class AnnotationMetadataResolver extends MetadataResolver {
+    private final AnnotationData annotation;
 
-    protected final String targetAnnotation;
-
-    public AnnotationMetadataResolver(String targetAnnotation) {
-        this.targetAnnotation = targetAnnotation;
+    public AccumulatingAnnotationVisitor(AnnotationData annotation) {
+        super(Opcodes.ASM8);
+        this.annotation = annotation;
     }
 
-    protected LinkedList<AnnotationData> getAnnotations(InputStream classStream) throws IOException {
-        AnnotationSeekingClassVisitor cv = new AnnotationSeekingClassVisitor();
-        ClassReader cr = new ClassReader(classStream);
-        cr.accept(cv, 0);
-
-        return cv.getAnnotations();
+    @Override
+    public void visit(String name, Object value) {
+        annotation.getAnnotationData().put(name, value);
     }
-
 }

@@ -24,25 +24,29 @@
 
 package com.dscalzi.claritas.resolver.library.forge;
 
+import com.dscalzi.claritas.asm.ClaritasClassVisitor;
 import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
-import com.dscalzi.claritas.resolver.AnnotationMetadataResolver;
+import com.dscalzi.claritas.resolver.MetadataResolver;
 import com.dscalzi.claritas.util.DataUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-public class ForgeMetadataResolver_1_13 extends AnnotationMetadataResolver {
+public class ForgeMetadataResolver_1_13 extends MetadataResolver {
 
     private static final String A_K_MODID = "value";
 
+    private final String targetAnnotation;
+
     public ForgeMetadataResolver_1_13(String targetAnnotation) {
-        super(targetAnnotation);
+        this.targetAnnotation = targetAnnotation;
     }
 
     @Override
     public ModuleMetadata resolveMetadata(InputStream classStream) throws IOException {
-        return getAnnotations(classStream).stream()
+        ClaritasClassVisitor cv = this.getClaritasClassVisitor(classStream);
+        return cv.getAnnotations().stream()
                 .filter(a -> a.getClassName().equals(this.targetAnnotation))
                 .findFirst()
                 .map(a -> {
