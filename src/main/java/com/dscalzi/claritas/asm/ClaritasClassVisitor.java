@@ -44,7 +44,7 @@ public class ClaritasClassVisitor extends ClassVisitor {
     private final LinkedList<AnnotationData> annotations = new LinkedList<>();
 
     public ClaritasClassVisitor() {
-        super(Opcodes.ASM8);
+        super(Opcodes.ASM9);
     }
 
     @Override

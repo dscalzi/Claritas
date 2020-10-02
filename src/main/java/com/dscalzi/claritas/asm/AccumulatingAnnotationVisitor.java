@@ -33,7 +33,7 @@ public class AccumulatingAnnotationVisitor extends AnnotationVisitor {
     private final AnnotationData annotation;
 
     public AccumulatingAnnotationVisitor(AnnotationData annotation) {
-        super(Opcodes.ASM8);
+        super(Opcodes.ASM9);
         this.annotation = annotation;
     }
 

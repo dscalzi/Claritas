@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'com.dscalzi'
-version '1.2.0'
+version '1.2.1'
 
 description = 'Utility library to extract metadata through bytecode analysis.'
 mainClassName = 'com.dscalzi.claritas.Main'
