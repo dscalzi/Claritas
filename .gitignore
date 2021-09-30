@@ -35,3 +35,7 @@ dependency-reduced-pom.xml
 /bin
 */bin
 atlassian-ide-plugin.xml
+
+# Debug
+output.json
+claritasArgFile.txt

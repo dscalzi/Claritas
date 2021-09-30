@@ -50,7 +50,7 @@ public class ClaritasClassVisitor extends ClassVisitor {
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         this.classType = Type.getObjectType(name);
-        this.superType = Type.getObjectType(superName);
+        this.superType = superName != null && !superName.isEmpty() ? Type.getObjectType(superName) : null;
 
         if(interfaces != null) {
             Arrays.stream(interfaces).map(Type::getObjectType).forEach(interfaceTypes::add);
@@ -72,7 +72,7 @@ public class ClaritasClassVisitor extends ClassVisitor {
     }
 
     public String getSuperClassName() {
-        return superType.getClassName();
+        return superType != null ? superType.getClassName() : null;
     }
 
     public Tuple<String, List<String>> getInterfaces() {

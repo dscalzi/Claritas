@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -205,7 +206,7 @@ public class ForgeMetadataResolver_1_7 extends MetadataResolver {
 
                 // Try looking for extends
                 if(this.coreModMetadata.getGroup() == null) {
-                    if(cv.getSuperClassName().equals(this.dummyContainerClass)) {
+                    if(Objects.equals(cv.getSuperClassName(), this.dummyContainerClass)) {
                         this.coreModMetadata.setGroup(DataUtil.inferGroupFromPackage(DataUtil.getPackage(cv.getClassName()), this.coreModMetadata.getId()));
                     }
                 }
