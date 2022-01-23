@@ -24,6 +24,9 @@
 
 package com.dscalzi.claritas.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -31,6 +34,8 @@ import java.util.regex.Pattern;
 public class DataUtil {
 
     public static final Pattern ILLEGAL_VERSION_CHARS = Pattern.compile(".*[@$]+.*");
+
+    private static final Logger log = LoggerFactory.getLogger(DataUtil.class);
 
     public static final List<String> BLACKLIST = Arrays.asList(
             "common",
@@ -57,10 +62,21 @@ public class DataUtil {
     }
 
     public static String getPackage(String name) {
+        // If the class is not in a package, we cannot use the default package.
+        if(!name.contains(".")) {
+            return null;
+        }
         return name.substring(0, name.lastIndexOf('.')).toLowerCase();
     }
 
     public static String inferGroupFromPackage(String packageName, @Nullable String id) {
+
+        // If package name comes in as null, return null.
+        if(packageName == null) {
+            log.debug("Mod {} has null package.", id);
+            return null;
+        }
+
         // Linked list removeLast is O(1)
         LinkedList<String> packageBits = new LinkedList<>(Arrays.asList(packageName.split("\\.")));
         List<String> CUSTOM_BLACKLIST = buildBlacklist(id);
