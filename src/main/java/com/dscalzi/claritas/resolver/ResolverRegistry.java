@@ -27,14 +27,13 @@ package com.dscalzi.claritas.resolver;
 import com.dscalzi.claritas.exception.UnknownLibraryException;
 import com.dscalzi.claritas.resolver.library.LibraryType;
 import com.dscalzi.claritas.resolver.library.forge.ForgeConfiguration;
-import com.dscalzi.claritas.resolver.library.liteloader.LiteloaderConfiguration;
 
 public final class ResolverRegistry {
 
-    protected static ResolverConfiguration getLibraryConfiguration(LibraryType type) {
+    private static ResolverConfiguration getLibraryConfiguration(LibraryType type) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch(type) {
             case FORGE: return new ForgeConfiguration();
-            case LITELOADER: return new LiteloaderConfiguration();
             default: throw new UnknownLibraryException(type.name());
         }
     }

@@ -68,7 +68,7 @@ The analysis results will be stored in the file provided by `--outputFile` optio
   * Always present on ForgeMods (1.7-1.12).
   * Never present in all other circumstances.
 
-Only id and group can be resolved on 1.13+. Only group can be resolved for litemods.
+Only id and group can be resolved on 1.13+.
 
 #### Using an argFile
 
@@ -93,10 +93,5 @@ Recall, VM options are passed before `-jar`. Ex. `java [VM options] -jar [jarfil
 #### Supported Libraries
 
 * FORGE
-* LITELOADER
 
 Note: If bytecode analysis is possible, but not required, to resolve metadata for a particular library, support may not be added.
-
-### Final Notes
-
-Claritas is in a developmental state and may change significantly.

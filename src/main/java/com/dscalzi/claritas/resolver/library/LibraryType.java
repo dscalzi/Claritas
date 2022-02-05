@@ -26,7 +26,6 @@ package com.dscalzi.claritas.resolver.library;
 
 public enum LibraryType {
 
-    FORGE,
-    LITELOADER
+    FORGE
 
 }
