@@ -22,29 +22,22 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.discovery.dto.forge
+package com.dscalzi.claritas.discovery.dto;
 
-enum ForgeModType_1_7 {
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-    /**
-     * Standard mod with an @Mod annotation.
-     */
-    MOD,
-    /**
-     * Mod without an @Mod annotation. Contains a class
-     * that extends DummyModContainer OR annotated with
-     * IFMLLoadingPlugin.Name OR implements IFMLLoadingPlugin.
-     */
-    CORE_MOD,
-    /**
-     * Tweaker jar that does not do anything with forge.
-     * Forge still loads them for some reason. Has TweakClass
-     * manifest entry.
-     */
-    TWEAKER,
-    /**
-     * All we know is this is a JAR file.
-     */
-    UNKNOWN
+@ToString
+@Getter
+@Setter
+@EqualsAndHashCode
+public class ModuleMetadata {
+
+    private String id;
+    private String group;
+    private String version;
+    private String name;
 
 }

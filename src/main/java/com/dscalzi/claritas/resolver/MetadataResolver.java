@@ -26,9 +26,9 @@ package com.dscalzi.claritas.resolver;
 
 import com.dscalzi.claritas.asm.ClaritasClassVisitor;
 import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
-import groovyjarjarantlr4.v4.runtime.misc.Nullable;
 import org.objectweb.asm.ClassReader;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 

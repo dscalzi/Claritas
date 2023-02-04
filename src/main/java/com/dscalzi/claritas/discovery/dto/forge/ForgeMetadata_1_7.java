@@ -22,22 +22,19 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.discovery.dto.forge
+package com.dscalzi.claritas.discovery.dto.forge;
 
-import com.dscalzi.claritas.discovery.dto.ModuleMetadata
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
+import com.dscalzi.claritas.discovery.dto.ModuleMetadata;
+import lombok.*;
 
 @ToString
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
-class ForgeMetadata_1_7 extends ModuleMetadata {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ForgeMetadata_1_7 extends ModuleMetadata {
 
-    ForgeMetadata_1_7() { }
-
-    ForgeMetadata_1_7(ForgeModType_1_7 modType) {
-        this.modType = modType
-    }
-
-    ForgeModType_1_7 modType
+    private ForgeModType_1_7 modType;
 
 }

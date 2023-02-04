@@ -22,22 +22,29 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.asm.dto
+package com.dscalzi.claritas.asm.dto;
 
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @ToString
+@Getter
+@Setter
 @EqualsAndHashCode
-class AnnotationData {
+public class AnnotationData {
 
-    final Map<String, Object> annotationData = new LinkedHashMap<>()
-    final String className
-    final String annotatedClassName
+    private final Map<String, Object> annotationData = new LinkedHashMap<>();
+    private final String className;
+    private final String annotatedClassName;
 
-    AnnotationData(String className, String annotatedClassName) {
-        this.className = className
-        this.annotatedClassName = annotatedClassName
+    public AnnotationData(String className, String annotatedClassName) {
+        this.className = className;
+        this.annotatedClassName = annotatedClassName;
     }
 
 }

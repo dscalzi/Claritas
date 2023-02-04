@@ -22,16 +22,28 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.discovery.dto.internal
+package com.dscalzi.claritas.discovery.dto.forge;
 
-// Non-standard
-class TweakMetaFile {
-
-    String id
-    String name
-    String version
-    List<String> authors
-    String description
-    String url
+/**
+ * Standard mod with an @Mod annotation.
+ */
+public enum ForgeModType_1_7 {
+    MOD,
+    /**
+     * Mod without an @Mod annotation. Contains a class
+     * that extends DummyModContainer OR annotated with
+     * IFMLLoadingPlugin.Name OR implements IFMLLoadingPlugin.
+     */
+    CORE_MOD,
+    /**
+     * Tweaker jar that does not do anything with forge.
+     * Forge still loads them for some reason. Has TweakClass
+     * manifest entry.
+     */
+    TWEAKER,
+    /**
+     * All we know is this is a JAR file.
+     */
+    UNKNOWN
 
 }

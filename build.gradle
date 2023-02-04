@@ -4,15 +4,16 @@ plugins {
     id 'application'
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id "io.freefair.lombok" version "6.6.1"
 }
 
 wrapper {
-    gradleVersion = '7.3.3'
+    gradleVersion = '7.6'
     distributionType = Wrapper.DistributionType.BIN
 }
 
 group 'com.dscalzi'
-version '2.0.0'
+version '2.1.0'
 
 description = 'Utility library to extract metadata through bytecode analysis.'
 mainClassName = 'com.dscalzi.claritas.Main'
@@ -26,7 +27,6 @@ repositories {
 
 dependencies {
 
-    implementation "org.codehaus.groovy:groovy:${groovyVersion}"
     implementation "com.google.code.findbugs:jsr305:${jsr305Version}"
 
     implementation "org.ow2.asm:asm:${asmVersion}"
@@ -67,17 +67,5 @@ jar {
 
 shadowJar {
     archiveClassifier.set('dist')
-    minimize()
 }
 assemble.dependsOn('shadowJar')
-
-sourceSets {
-    main {
-        java {
-            srcDirs = [] // don't compile Java code twice
-        }
-        groovy {
-            srcDirs = [ 'src/main/groovy', 'src/main/java' ]
-        }
-    }
-}

@@ -33,9 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 public class LibraryAnalyzer {
@@ -63,17 +61,7 @@ public class LibraryAnalyzer {
 
     public ModuleMetadata analyze() {
 
-        ZipFile zipFile;
-
-        try {
-            zipFile = new ZipFile(this.absoluteJarPath);
-        } catch(IOException e) {
-            log.error("IOException while opening jar file.", e);
-            return null;
-        }
-
         MetadataResolver resolver = ResolverRegistry.getMetadataResolver(this.type, this.mcVersion);
-
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(this.absoluteJarPath))) {
 
             resolver.preAnalyze(absoluteJarPath);
@@ -82,13 +70,9 @@ public class LibraryAnalyzer {
             while((entry = zis.getNextEntry()) != null) {
 
                 if(!entry.isDirectory() && isClassEntry(entry)) {
-                    try(InputStream is = zipFile.getInputStream(entry)) {
-
-                        ModuleMetadata md = resolver.resolveMetadata(is);
-                        if(md != null) {
-                            return md;
-                        }
-
+                    ModuleMetadata md = resolver.resolveMetadata(zis);
+                    if(md != null) {
+                        return md;
                     }
                 }
 

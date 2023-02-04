@@ -22,18 +22,26 @@
  * THE SOFTWARE.
  */
 
-package com.dscalzi.claritas.discovery.dto
+package com.dscalzi.claritas.discovery.dto.internal;
 
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.util.List;
 
 @ToString
+@Getter
+@Setter
 @EqualsAndHashCode
-class ModuleMetadata {
+public class TweakMetaFile {
 
-    String id
-    String group
-    String version
-    String name
+    private String id;
+    private String name;
+    private String version;
+    private List<String> authors;
+    private String description;
+    private String url;
 
 }
