@@ -24,10 +24,12 @@
 
 package com.dscalzi.claritas.discovery.dto.forge;
 
-/**
- * Standard mod with an @Mod annotation.
- */
+
 public enum ForgeModType_1_7 {
+
+    /**
+     * Standard mod with an @Mod annotation.
+     */
     MOD,
     /**
      * Mod without an @Mod annotation. Contains a class
