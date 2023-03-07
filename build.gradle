@@ -3,12 +3,12 @@ plugins {
     id 'java'
     id 'application'
     id 'org.cadixdev.licenser' version '0.6.1'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id "io.freefair.lombok" version "6.6.1"
+    id 'com.github.johnrengelman.shadow' version '8.1.0'
+    id "io.freefair.lombok" version "6.6.3"
 }
 
 wrapper {
-    gradleVersion = '7.6'
+    gradleVersion = '8.0.2'
     distributionType = Wrapper.DistributionType.BIN
 }
 
