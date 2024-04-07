@@ -3,17 +3,17 @@ plugins {
     id 'java'
     id 'application'
     id 'org.cadixdev.licenser' version '0.6.1'
-    id 'com.github.johnrengelman.shadow' version '8.1.0'
-    id "io.freefair.lombok" version "6.6.3"
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id "io.freefair.lombok" version "8.6"
 }
 
 wrapper {
-    gradleVersion = '8.0.2'
+    gradleVersion = '8.7'
     distributionType = Wrapper.DistributionType.BIN
 }
 
 group 'com.dscalzi'
-version '2.1.0'
+version '2.2.0'
 
 description = 'Utility library to extract metadata through bytecode analysis.'
 mainClassName = 'com.dscalzi.claritas.Main'
